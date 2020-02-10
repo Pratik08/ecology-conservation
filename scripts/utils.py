@@ -53,6 +53,8 @@ def categorize_grants(data_sentences, category_names, keywords):
                 if string_found(keyword, grant):
                     curr_key.append(keyword.replace(' ', '_'))
                     curr_cat.append(category_names[idx])
+        curr_key = list(set(curr_key))
+        curr_cat = list(set(curr_cat))
         pbar.update(1)
     pbar.close()
 
@@ -82,8 +84,9 @@ def apply_stopwords(output_grants, stopwords_csv):
     stopwords_cats = [x.strip() for x in list(stopwords_df)]
     stopwords = []
     for idx in range(len(stopwords_cats)):
-        stopwords.append(list(set(stopwords_df[stopwords_cats[idx]].dropna())))
-    stopwords = [x.lower() for x in stopwords]
+        temp = list(set(stopwords_df[stopwords_cats[idx]].dropna()))
+        temp = [x.lower() for x in temp]
+        stopwords.append(temp)
 
     pbar = tqdm.tqdm(total=len(output_data))
     for idx in range(len(output_data)):
@@ -93,7 +96,10 @@ def apply_stopwords(output_grants, stopwords_csv):
                 for stopword in stopwords[stop_idx]:
                     if string_found(stopword,
                                     output_data.iloc[idx]['Description'].lower()):
-                        class_cats.remove(stopword)
+                        try:
+                            class_cats.remove(stop_cat)
+                        except ValueError:
+                            pass
         output_data.iloc[idx]['Categories'] = '|'.join(class_cats)
         pbar.update(1)
     pbar.close()
