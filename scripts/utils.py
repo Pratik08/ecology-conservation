@@ -19,7 +19,7 @@ def preprocess_data(raw_data, preprocess_phrases):
                       if ele not in ['Description']], axis=1)
     data = data.dropna().reset_index(drop=True)
 
-    for phrase in preproc_phrase:
+    for phrase in preproc_phrases:
         data = data[data.Description.str.lower() != phrase]
 
     data_sentences = data.Description.values.tolist()
@@ -55,6 +55,8 @@ def categorize_grants(data_sentences, category_names, keywords):
                     curr_cat.append(category_names[idx])
         curr_key = list(set(curr_key))
         curr_cat = list(set(curr_cat))
+        grant_categories.append(curr_cat)
+        grant_keywords.append(curr_key)
         pbar.update(1)
     pbar.close()
 

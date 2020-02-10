@@ -14,7 +14,8 @@ from utils import get_output_grants
 Path to data files
 '''
 raw_data = '../Data/AllData - AllData.csv'
-keywords_v3 = '../Data/keywords_alphabetized_v3.csv'
+keywords_v3 = '../Data/Keywords/keywords_alphabetized_v3.csv'
+preprocess_phrases = '../Data/Preprocessing_Phrases.csv'
 output_file = '../Data/Output/output_grants_v8.csv'
 
 '''
