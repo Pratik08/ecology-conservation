@@ -13,10 +13,10 @@ from utils import get_output_grants
 '''
 Path to data files
 '''
-raw_data = '../Data/AllData - AllData.csv'
-keywords_v3 = '../Data/Keywords/keywords_alphabetized_v3.csv'
-preprocess_phrases = '../Data/Preprocessing_Phrases.csv'
-output_file = '../Data/Output/output_grants_v8.csv'
+raw_data = '/home/psd2120/research/Data/AllData - AllData.csv'
+preprocess_phrases = '/home/psd2120/research/Data/Preprocessing/Preprocessing_Phrases_v3.csv'
+keywords_v9 = '/home/psd2120/research/Data/Keywords/keywords_alphabetized_v9.csv'
+output_file = '/home/psd2120/research/Data/Output/output_grants_v12_full.csv'
 
 '''
 Preprocessing to remove grants which are empty, operating support,
@@ -28,7 +28,7 @@ print('Preprocessed data.')
 '''
 Extract keywords from CSV
 '''
-category_names, keywords = extract_keywords_from_csv(keywords_v3)
+category_names, keywords = extract_keywords_from_csv(keywords_v9)
 print('Extracted keywords.')
 
 '''
@@ -46,6 +46,7 @@ output_grants = get_output_grants(data_sentences, grant_keywords,
 
 with open(output_file, "w", newline="") as f:
     writer = csv.writer(f)
+    writer.writerow(['Description', 'Keywords', 'Categories'])
     writer.writerows(output_grants)
 
 print('Saved output.')
