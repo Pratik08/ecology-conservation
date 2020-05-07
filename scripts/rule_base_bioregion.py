@@ -6,16 +6,17 @@ import pandas as pd
 
 from utils import string_found
 from utils import preprocess_data
+from utils import extract_keywords_from_csv
 from utils import categorize_grants
 from utils import get_output_grants
 
 '''
 Path to data files
 '''
-raw_data = '../Data/AllData - AllData.csv'
-bioregion_keywords = '../Data/Biogeographic_Realms_Ecoregions.csv'
-preprocess_phrases = '../Data/Preprocessing_Phrases.csv'
-output_file = '../Data/Output/output_bioregions_v3.csv'
+raw_data = '/home/psd2120/research/Data/AllData - AllData.csv'
+bioregion_keywords = '/home/psd2120/research/Data/Biogeographic_Realms_Ecoregions.csv'
+preprocess_phrases = '/home/psd2120/research/Data/Preprocessing/Preprocessing_Phrases_v3.csv'
+output_file = '/home/psd2120/research/Data/Output/output_bioregions_v7.csv'
 
 '''
 Preprocessing to remove grants which are empty, operating support,
@@ -27,13 +28,8 @@ print('Preprocessed data.')
 '''
 Extract keywords from CSV
 '''
-df_eco = pd.read_csv(bioregion_keywords)
-category_names = list(df_eco)
-keywords = []
-for idx in range(len(category_names)):
-    temp = list(set(df_eco[category_names[idx]].dropna()))
-    temp = [x.lower() for x in temp]
-    keywords.append(temp)
+category_names, keywords = extract_keywords_from_csv(bioregion_keywords)
+print('Extracted keywords.')
 
 '''
 Categorize Grants
@@ -50,6 +46,7 @@ output_grants = get_output_grants(data_sentences, grant_keywords,
 
 with open(output_file, "w", newline="") as f:
     writer = csv.writer(f)
+    writer.writerow(['Description', 'Bio_keywords', 'Bio_regions'])
     writer.writerows(output_grants)
 
 print('Saved output.')
