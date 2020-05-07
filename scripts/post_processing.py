@@ -10,8 +10,8 @@ from utils import apply_stopwords
 '''
 Path to data files
 '''
-output_grants = '../Data/Output/output_grants_v8.csv'
-stopwords_csv = '../Data/Stopwords-Alphabetized.csv'
+output_grants = '/home/psd2120/research/Data/Output/output_grants_v12.csv'
+stopwords_csv = '/home/psd2120/research/Data/Stopwords/Stopwords_Alphabetized_v5.csv'
 
 proc_output = apply_stopwords(output_grants, stopwords_csv)
 proc_output.to_csv(output_grants, index=False)
