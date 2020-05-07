@@ -30,7 +30,6 @@ def preprocess_data(raw_data, preprocess_phrases):
 
 def extract_keywords_from_csv(file):
     keywords_df = pd.read_csv(file)
-    keywords_df = keywords_df.drop(['Unnamed: 31', 'Unnamed: 32'], axis=1)
     category_names = [x.strip() for x in list(keywords_df)]
     keywords = []
 
@@ -82,27 +81,32 @@ def get_output_grants(data_sentences, grant_keywords, grant_categories):
 def apply_stopwords(output_grants, stopwords_csv):
     output_data = pd.read_csv(output_grants)
     stopwords_df = pd.read_csv(stopwords_csv)
+    
+    output_data['Stopwords'] = "-"
+    output_data['Filtered_Categories'] = "-"
 
-    stopwords_cats = [x.strip() for x in list(stopwords_df)]
-    stopwords = []
-    for idx in range(len(stopwords_cats)):
-        temp = list(set(stopwords_df[stopwords_cats[idx]].dropna()))
+    stopwords_dict = dict()
+    for cat in [x.strip() for x in list(stopwords_df)]:
+        temp = list(set(stopwords_df[cat].dropna()))
         temp = [x.lower() for x in temp]
-        stopwords.append(temp)
+        stopwords_dict[cat] = temp
 
     pbar = tqdm.tqdm(total=len(output_data))
     for idx in range(len(output_data)):
-        class_cats = output_data.iloc[idx]['Categories'].split('|')
-        for stop_idx, stop_cat in enumerate(stopwords_cats):
+        class_cats = set(output_data.iloc[idx]['Categories'].split('|'))
+        stop_added = set()
+        flag = False
+        
+        for stop_cat in stopwords_dict.keys():
             if stop_cat in class_cats:
-                for stopword in stopwords[stop_idx]:
+                for stopword in stopwords_dict[stop_cat]:
                     if string_found(stopword,
                                     output_data.iloc[idx]['Description'].lower()):
-                        try:
-                            class_cats.remove(stop_cat)
-                        except ValueError:
-                            pass
-        output_data.iloc[idx]['Categories'] = '|'.join(class_cats)
+                        class_cats.discard(stop_cat)
+                        stop_added.add(stopword)
+        output_data.loc[idx,'Filtered_Categories'] = '|'.join(list(class_cats))
+        if len(stop_added) > 0:
+            output_data.loc[idx, 'Stopwords'] = '|'.join(list(stop_added))
         pbar.update(1)
     pbar.close()
 
